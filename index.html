@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AeroSim - Бронирование рейсов</title>
+    <title>Avialines - Симулятор бронирования рейсов</title>
     <!-- Hidden project logo icon & Open Graph metadata -->
     <link rel="icon" type="image/png" href="https://github.com/thaiiqow/Avialines/blob/main/6CB575C9-2935-45A0-BDC6-BFD16B84902D.png?raw=true">
     <meta property="og:image" content="https://github.com/thaiiqow/Avialines/blob/main/6CB575C9-2935-45A0-BDC6-BFD16B84902D.png?raw=true">
@@ -95,10 +95,10 @@
                         <div class="flex items-center gap-2">
                             <h1 class="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">Avialines</h1>
                             <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
-                                <i class="fa-solid fa-cloud mr-1"></i>BETA
+                                <i class="fa-solid fa-cloud mr-1"></i>Облачная синхронизация
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Управление авиаперелетами</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Управление виртуальными авиаперелетами</p>
                     </div>
                 </div>
 
@@ -179,7 +179,7 @@
                         <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                             <i class="fa-solid fa-magnifying-glass-location text-sky-500"></i> Онлайн-поиск авиарейсов по городам
                         </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Укажите города отправления и назначения для фильтрации</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Укажите вымышленные города отправления и назначения для фильтрации</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <button onclick="resetFilters()" class="px-3.5 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-200/60 dark:bg-slate-800/60 hover:bg-slate-300/60 rounded-xl transition flex items-center gap-1.5">
@@ -266,7 +266,7 @@
                 </div>
                 <h3 class="font-bold text-slate-800 dark:text-slate-200 text-lg">Рейсы не найдены</h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1">
-                    По вашему запросу не найдено ни одного авиарейса. Попробуйте сбросить параметры поиска.
+                    По вашему запросу не найдено ни одного вымышленного авиарейса. Попробуйте сбросить параметры поиска.
                 </p>
                 <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-xl shadow transition">
                     Сбросить все фильтры
@@ -283,7 +283,7 @@
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-slate-900 dark:text-white">Регистрация нового авиарейса</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Форма создания перелета для владельца</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Форма создания виртуального перелета для владельца</p>
                     </div>
                 </div>
 
@@ -377,7 +377,7 @@
                         </div>
                         <div>
                             <h2 class="text-lg font-bold text-slate-900 dark:text-white">Новый город и аэропорт</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Регистрация локации</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Регистрация виртуальной локации</p>
                         </div>
                     </div>
 
@@ -460,7 +460,7 @@
                         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Мастер-пароль *</label>
                         <input type="password" id="auth-password" required placeholder="Введите пароль..." 
                             class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-white">
-                        <p class="text-[11px] text-slate-400 mt-1">Эта страница доступна только для <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-amber-600 dark:text-amber-400 font-mono">владельца</code></p>
+                        <p class="text-[11px] text-slate-400 mt-1">Пароль владельца по умолчанию: <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-amber-600 dark:text-amber-400 font-mono">admin123</code></p>
                     </div>
                     <div id="auth-error" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-medium"></div>
 
@@ -532,7 +532,7 @@
 
                 <div class="pt-2">
                     <button onclick="confirmBooking()" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-check-circle"></i> Оформить билет
+                        <i class="fa-solid fa-check-circle"></i> Оформить виртуальный билет
                     </button>
                 </div>
             </div>
@@ -579,14 +579,69 @@
         let currentUser = null;
 
         let isOwnerMode = localStorage.getItem('avialines_is_owner') === 'true';
-        let ownerPassword = localStorage.getItem('avialines_owner_pass') || '726Cow178';
+        let ownerPassword = localStorage.getItem('avialines_owner_pass') || 'admin123';
 
         const defaultCities = [
-            { id: 'city-1', name: 'Нуринам', country: 'Океания', airport: 'Ландои Интл', iata: 'NRN' },
-            { id: 'city-2', name: 'Паттайя', country: 'Таиланд', airport: 'У-Тапао', iata: 'UTP' },
-            { id: 'city-3', name: 'Токио', country: 'Япония', airport: 'Ханеда', iata: 'HND' },
-            { id: 'city-4', name: 'Сидней', country: 'Австралия', airport: 'Кингсфорд Смит', iata: 'SYD' },
-            { id: 'city-5', name: 'Москва', country: 'Россия', airport: 'Шереметьево', iata: 'SVO' }
+            { id: 'city-1', name: 'Москва', country: 'Россия', airport: 'Аэропорт Шереметьево имени А. С. Пушкина', iata: 'SVO' },
+            { id: 'city-2', name: 'Москва', country: 'Россия', airport: 'Аэропорт Домодедово имени М. В. Ломоносова', iata: 'DME' },
+            { id: 'city-3', name: 'Москва', country: 'Россия', airport: 'Аэропорт Внуково имени А. Н. Туполева', iata: 'VKO' },
+            { id: 'city-4', name: 'Москва', country: 'Россия', airport: 'Аэропорт Жуковский', iata: 'ZIA' },
+            { id: 'city-5', name: 'Санкт‑Петербург', country: 'Россия', airport: 'Аэропорт Пулково', iata: 'LED' },
+            { id: 'city-6', name: 'Новосибирск', country: 'Россия', airport: 'Аэропорт Толмачёво имени А. И. Покрышкина', iata: 'OVB' },
+            { id: 'city-7', name: 'Екатеринбург', country: 'Россия', airport: 'Аэропорт Кольцово имени Акинфия Демидова', iata: 'SVX' },
+            { id: 'city-8', name: 'Сочи', country: 'Россия', airport: 'Международный аэропорт Сочи имени В. И. Севастьянова (Адлер)', iata: 'AER' },
+            { id: 'city-9', name: 'Краснодар', country: 'Россия', airport: 'Аэропорт Пашковский имени Екатерины II', iata: 'KRR' },
+            { id: 'city-10', name: 'Владивосток', country: 'Россия', airport: 'Международный аэропорт Владивосток (Кневичи) имени В. К. Арсеньева', iata: 'VVO' },
+            { id: 'city-11', name: 'Хабаровск', country: 'Россия', airport: 'Аэропорт Хабаровск (Новый) имени Г. И. Невельского', iata: 'KHV' },
+            { id: 'city-12', name: 'Южно‑Сахалинск', country: 'Россия', airport: 'Аэропорт Южно‑Сахалинск имени А. П. Чехова («Хомутово»)', iata: 'UUS' },
+            { id: 'city-13', name: 'Нуринам', country: 'Океания', airport: 'Международный Аэропорт Нуринама имени Ю.А. Сенкевича', iata: 'NRN' },
+            { id: 'city-14', name: 'Красноярск', country: 'Россия', airport: 'Аэропорт Емельяново', iata: 'KJA' },
+            { id: 'city-15', name: 'Иркутск', country: 'Россия', airport: 'Аэропорт Иркутск', iata: 'IKT' },
+            { id: 'city-16', name: 'Петропавловск‑Камчатский', country: 'Россия', airport: 'Аэропорт Елизово', iata: 'PKC' },
+            { id: 'city-17', name: 'Калининград', country: 'Россия', airport: 'Аэропорт Храброво имени императрицы Елизаветы Петровны', iata: 'KGD' },
+            { id: 'city-18', name: 'Нижний Новгород', country: 'Россия', airport: 'Аэропорт Чкалов имени В. П. Чкалова', iata: 'GOJ' },
+            { id: 'city-19', name: 'Саратов', country: 'Россия', airport: 'Аэропорт Гагарин', iata: 'GSV' },
+            { id: 'city-20', name: 'Самара', country: 'Россия', airport: 'Аэропорт Курумоч', iata: 'KUF' },
+            { id: 'city-21', name: 'Уфа', country: 'Россия', airport: 'Аэропорт Уфа', iata: 'UFA' },
+            { id: 'city-22', name: 'Тюмень', country: 'Россия', airport: 'Аэропорт Рощино', iata: 'TJM' },
+            { id: 'city-23', name: 'Пермь', country: 'Россия', airport: 'Аэропорт Большое Савино', iata: 'PEE' },
+            { id: 'city-24', name: 'Казань', country: 'Россия', airport: 'Аэропорт Казань (Центральный)', iata: 'KZN' },
+            { id: 'city-25', name: 'Челябинск', country: 'Россия', airport: 'Аэропорт Баландино', iata: 'CEK' },
+            { id: 'city-26', name: 'Ульяновск', country: 'Россия', airport: 'Аэропорт Ульяновск‑Восточный', iata: 'ULY' },
+            { id: 'city-27', name: 'Якутск', country: 'Россия', airport: 'Аэропорт Якутск', iata: 'YKS' },
+            { id: 'city-28', name: 'Магадан', country: 'Россия', airport: 'Аэропорт Магадан (Сокол)', iata: 'GDX' },
+            { id: 'city-29', name: 'Минеральные Воды', country: 'Россия', airport: 'Аэропорт Минеральные Воды', iata: 'MRV' },
+            { id: 'city-30', name: 'Анапа', country: 'Россия', airport: 'Аэропорт Анапа (Витязево)', iata: 'AAQ' },
+            { id: 'city-31', name: 'Хошимин', country: 'Вьетнам', airport: 'Аэропорт Таншоннят (Tân Sơn Nhất)', iata: 'SGN' },
+            { id: 'city-32', name: 'Ханой', country: 'Вьетнам', airport: 'Аэропорт Нойбай (Nội Bài)', iata: 'HAN' },
+            { id: 'city-33', name: 'Дананг', country: 'Вьетнам', airport: 'Аэропорт Дананг (Đà Nẵng)', iata: 'DAD' },
+            { id: 'city-34', name: 'Нячанг', country: 'Вьетнам', airport: 'Аэропорт Камрань (Cam Ranh)', iata: 'CXR' },
+            { id: 'city-35', name: 'Фукуок', country: 'Вьетнам', airport: 'Аэропорт Фукуок (Phú Quốc)', iata: 'PQC' },
+            { id: 'city-36', name: 'Далат', country: 'Вьетнам', airport: 'Аэропорт Льенкхыонг (Liên Khương)', iata: 'DLI' },
+            { id: 'city-37', name: 'Хюэ', country: 'Вьетнам', airport: 'Аэропорт Фубай (Phú Bài)', iata: 'HUI' },
+            { id: 'city-38', name: 'Фантхиет', country: 'Вьетнам', airport: 'Аэропорт Зилык (Rạch Giá)', iata: 'VKG' },
+            { id: 'city-39', name: 'Куинён', country: 'Вьетнам', airport: 'Аэропорт Фукат (Phù Cát)', iata: 'UIH' },
+            { id: 'city-40', name: 'Винь', country: 'Вьетнам', airport: 'Аэропорт Винь (Vinh)', iata: 'VII' },
+            { id: 'city-41', name: 'Хайфон', country: 'Вьетнам', airport: 'Аэропорт Катби (Cát Bi)', iata: 'HPH' },
+            { id: 'city-42', name: 'Тамки / Хойан', country: 'Вьетнам', airport: 'Аэропорт Чыокхай (Chu Lai)', iata: 'VCL' },
+            { id: 'city-43', name: 'Кондао', country: 'Вьетнам', airport: 'Аэропорт Кондак (Côn Đảo)', iata: 'VCS' },
+            { id: 'city-44', name: 'Бухта Халонг', country: 'Вьетнам', airport: 'Аэропорт Вандон (Vân Đồn)', iata: 'VDO' },
+            { id: 'city-45', name: 'Дьенбьенфу', country: 'Вьетнам', airport: 'Аэропорт Дьенбьен (Điện Biên)', iata: 'DIN' },
+            { id: 'city-46', name: 'Бангкок', country: 'Таиланд', airport: 'Аэропорт Суварнабхуми (Suvarnabhumi)', iata: 'BKK' },
+            { id: 'city-47', name: 'Бангкок', country: 'Таиланд', airport: 'Аэропорт Дон Муанг (Don Mueang)', iata: 'DMK' },
+            { id: 'city-48', name: 'Пхукет', country: 'Таиланд', airport: 'Аэропорт Пхукет (Phuket)', iata: 'HKT' },
+            { id: 'city-49', name: 'Паттайя', country: 'Таиланд', airport: 'Аэропорт У-Тапао (U-Tapao)', iata: 'UTP' },
+            { id: 'city-50', name: 'Чианг Май', country: 'Таиланд', airport: 'Аэропорт Чианг Май (Chiang Mai)', iata: 'CNX' },
+            { id: 'city-51', name: 'Самуи', country: 'Таиланд', airport: 'Аэропорт Самуи (Samui)', iata: 'USM' },
+            { id: 'city-52', name: 'Краби', country: 'Таиланд', airport: 'Аэропорт Краби (Krabi)', iata: 'KBV' },
+            { id: 'city-53', name: 'Кхонкэн', country: 'Таиланд', airport: 'Аэропорт Кхонкэн (Khon Kaen)', iata: 'KKC' },
+            { id: 'city-54', name: 'Удонтхани', country: 'Таиланд', airport: 'Аэропорт Удонтхани (Udon Thani)', iata: 'UTH' },
+            { id: 'city-55', name: 'Чианг Рай', country: 'Таиланд', airport: 'Аэропорт Чианг Рай (Chiang Rai)', iata: 'CEI' },
+            { id: 'city-56', name: 'Хатъяй', country: 'Таиланд', airport: 'Аэропорт Хатъяй (Hat Yai)', iata: 'HDY' },
+            { id: 'city-57', name: 'Сураттхани', country: 'Таиланд', airport: 'Аэропорт Сураттхани (Surat Thani)', iata: 'URT' },
+            { id: 'city-58', name: 'Трат', country: 'Таиланд', airport: 'Аэропорт Трат (Trat)', iata: 'TDX' },
+            { id: 'city-59', name: 'Накхонситхаммарат', country: 'Таиланд', airport: 'Аэропорт Накхонситхаммарат (Nakhon Si Thammarat)', iata: 'NST' },
+            { id: 'city-60', name: 'Бурирам', country: 'Таиланд', airport: 'Аэропорт Бурирам (Buriram)', iata: 'BFV' }
         ];
 
         const defaultFlights = [
@@ -594,42 +649,112 @@
                 id: 'fl-101',
                 airline: 'AeroSky',
                 flightNumber: 'AS-742',
-                originId: 'city-5',
-                destinationId: 'city-2',
+                originId: 'city-1', // Москва SVO
+                destinationId: 'city-49', // Паттайя UTP
                 date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
                 depTime: '10:30',
-                arrTime: '18:45',
-                price: 24500,
+                arrTime: '22:45',
+                price: 42500,
                 currency: 'RUB',
-                aircraft: 'Airbus A320',
+                aircraft: 'Airbus A330-300',
                 bookedSeats: ['1A', '2B', '3C']
             },
             {
                 id: 'fl-102',
                 airline: 'Pacific Wings',
                 flightNumber: 'PW-109',
-                originId: 'city-2',
-                destinationId: 'city-3',
+                originId: 'city-49', // Паттайя UTP
+                destinationId: 'city-46', // Бангкок BKK
                 date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
                 depTime: '18:15',
-                arrTime: '23:50',
-                price: 380,
+                arrTime: '19:10',
+                price: 85,
                 currency: 'USD',
-                aircraft: 'Boeing 777-300ER',
+                aircraft: 'Boeing 737-800',
                 bookedSeats: ['12D', '12E']
             },
             {
                 id: 'fl-103',
                 airline: 'Oceania Express',
                 flightNumber: 'OE-304',
-                originId: 'city-1',
-                destinationId: 'city-4',
+                originId: 'city-13', // Нуринам NRN
+                destinationId: 'city-1', // Москва SVO
                 date: new Date(Date.now() + 259200000).toISOString().split('T')[0],
                 depTime: '06:00',
-                arrTime: '11:20',
-                price: 19800,
+                arrTime: '15:20',
+                price: 34800,
+                currency: 'RUB',
+                aircraft: 'Boeing 787 Dreamliner',
+                bookedSeats: []
+            },
+            {
+                id: 'fl-104',
+                airline: 'AeroSky',
+                flightNumber: 'AS-881',
+                originId: 'city-1', // Москва SVO
+                destinationId: 'city-31', // Хошимин SGN
+                date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                depTime: '21:10',
+                arrTime: '10:30',
+                price: 49000,
+                currency: 'RUB',
+                aircraft: 'Airbus A350-900',
+                bookedSeats: ['4A']
+            },
+            {
+                id: 'fl-105',
+                airline: 'Thai Skywings',
+                flightNumber: 'TS-220',
+                originId: 'city-46', // Бангкок BKK
+                destinationId: 'city-48', // Пхукет HKT
+                date: new Date(Date.now() + 120000000).toISOString().split('T')[0],
+                depTime: '14:00',
+                arrTime: '15:25',
+                price: 110,
+                currency: 'USD',
+                aircraft: 'Airbus A320',
+                bookedSeats: ['2A', '2B']
+            },
+            {
+                id: 'fl-106',
+                airline: 'Nurinam Air',
+                flightNumber: 'NA-001',
+                originId: 'city-13', // Нуринам NRN
+                destinationId: 'city-46', // Бангкок BKK
+                date: new Date(Date.now() + 300000000).toISOString().split('T')[0],
+                depTime: '11:45',
+                arrTime: '17:30',
+                price: 450,
+                currency: 'USD',
+                aircraft: 'Boeing 777-300ER',
+                bookedSeats: []
+            },
+            {
+                id: 'fl-107',
+                airline: 'Россия Экспресс',
+                flightNumber: 'SU-6012',
+                originId: 'city-5', // Санкт-Петербург LED
+                destinationId: 'city-8', // Сочи AER
+                date: new Date(Date.now() + 150000000).toISOString().split('T')[0],
+                depTime: '08:30',
+                arrTime: '12:45',
+                price: 12500,
                 currency: 'RUB',
                 aircraft: 'Boeing 737 MAX',
+                bookedSeats: ['1F']
+            },
+            {
+                id: 'fl-108',
+                airline: 'VietAero',
+                flightNumber: 'VA-402',
+                originId: 'city-31', // Хошимин SGN
+                destinationId: 'city-34', // Нячанг CXR
+                date: new Date(Date.now() + 200000000).toISOString().split('T')[0],
+                depTime: '09:15',
+                arrTime: '10:20',
+                price: 65,
+                currency: 'USD',
+                aircraft: 'Airbus A321',
                 bookedSeats: []
             }
         ];
@@ -668,15 +793,19 @@
                     defaultCities.forEach(async (c) => {
                         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cities', c.id), c);
                     });
-                } else {
+                } else if (loadedCities.length > 0) {
                     cities = loadedCities;
+                    populateCitySelects();
+                    renderCities();
+                    renderFlights();
+                } else {
+                    cities = defaultCities;
                     populateCitySelects();
                     renderCities();
                     renderFlights();
                 }
             }, (error) => {
                 console.error("Cities snapshot error:", error);
-                // Local fallback if cloud isn't available
                 if (cities.length === 0) cities = defaultCities;
                 populateCitySelects();
                 renderCities();
@@ -694,8 +823,11 @@
                     defaultFlights.forEach(async (f) => {
                         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'flights', f.id), f);
                     });
-                } else {
+                } else if (loadedFlights.length > 0) {
                     flights = loadedFlights;
+                    renderFlights();
+                } else {
+                    flights = defaultFlights;
                     renderFlights();
                 }
             }, (error) => {
@@ -1185,7 +1317,7 @@
             const grid = document.getElementById('seats-grid');
             grid.innerHTML = '';
 
-            const rows = ['1', '2', '3', '4', '5', '6'];
+            const rows = ['1', '2', '3', '4'];
             const cols = ['A', 'B', 'C', 'D', 'E', 'F'];
             const bookedSeats = selectedFlightForBooking.bookedSeats || [];
 
@@ -1248,7 +1380,7 @@
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'flights', selectedFlightForBooking.id), selectedFlightForBooking);
                 closeBookingModal();
-                showToast(`Билет забронирован! Пассажир: ${passengerName}, Место: ${selectedSeat}`, 'success');
+                showToast(`Виртуальный билет забронирован! Пассажир: ${passengerName}, Место: ${selectedSeat}`, 'success');
                 document.getElementById('passenger-name').value = '';
             } catch (err) {
                 console.error(err);
