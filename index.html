@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AeroSim - Бронирование рейсов</title>
+    <!-- Hidden project logo icon & Open Graph metadata -->
+    <link rel="icon" type="image/png" href="https://github.com/thaiiqow/Avialines/blob/main/6CB575C9-2935-45A0-BDC6-BFD16B84902D.png?raw=true">
+    <meta property="og:image" content="https://github.com/thaiiqow/Avialines/blob/main/6CB575C9-2935-45A0-BDC6-BFD16B84902D.png?raw=true">
+    <link rel="apple-touch-icon" href="https://github.com/thaiiqow/Avialines/blob/main/6CB575C9-2935-45A0-BDC6-BFD16B84902D.png?raw=true">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -76,22 +81,24 @@
 </head>
 <body class="bg-slate-100 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300">
 
+    <!-- Header Navigation -->
     <header class="sticky top-0 z-30 glass-panel shadow-sm border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo & Disclaimer -->
                 <div class="flex items-center space-x-3">
-                    <div class="p-2.5 bg-gradient-to-tr from-sky-500 to-indigo-600 rounded-xl text-white shadow-lg shadow-sky-500/30">
+                    <div class="p-2.5 bg-gradient-to-tr from-sky-500 to-indigo-600 rounded-xl text-white shadow-lg shadow-sky-500/30 relative">
                         <i class="fa-solid font-bold fa-plane-departure text-xl"></i>
+                        <img src="https://github.com/thaiiqow/Avialines/blob/main/6CB575C9-2935-45A0-BDC6-BFD16B84902D.png?raw=true" alt="Avialines Logo" class="hidden" id="project-logo">
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
                             <h1 class="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">AeroSim</h1>
                             <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
-                                <i class="fa-solid fa-triangle-exclamation mr-1"></i>BETA-Версия
+                                <i class="fa-solid fa-triangle-exclamation mr-1"></i>BETA
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Управление рейсами</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Управление авиаперелетами</p>
                     </div>
                 </div>
 
@@ -102,25 +109,25 @@
                     </button>
                     <button onclick="switchTab('add-flight')" id="tab-add-flight" class="nav-tab flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all">
                         <i class="fa-solid fa-plus-circle"></i> Создать рейс
+                        <i class="fa-solid fa-lock text-xs text-amber-500 admin-lock-icon ml-1" title="Требуется доступ владельца"></i>
                     </button>
                     <button onclick="switchTab('add-city')" id="tab-add-city" class="nav-tab flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all">
                         <i class="fa-solid fa-city"></i> Города и аэропорты
+                        <i class="fa-solid fa-lock text-xs text-amber-500 admin-lock-icon ml-1" title="Требуется доступ владельца"></i>
                     </button>
                 </nav>
 
-                <!-- Controls (Dark mode & Stats) -->
+                <!-- Controls (Owner auth & Theme) -->
                 <div class="flex items-center space-x-3">
+                    <button id="admin-auth-btn" onclick="openAuthModal()" class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-xl transition border border-slate-300 dark:border-slate-700 bg-slate-200/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800">
+                        <i id="admin-auth-icon" class="fa-solid fa-lock text-amber-500"></i>
+                        <span id="admin-auth-text">Вход для владельца</span>
+                    </button>
+
                     <button id="theme-toggle" onclick="toggleDarkMode()" class="p-2.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-xl bg-slate-200/50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-800 transition">
                         <i id="theme-toggle-dark-icon" class="fa-solid fa-moon hidden text-lg"></i>
                         <i id="theme-toggle-light-icon" class="fa-solid fa-sun hidden text-lg"></i>
                     </button>
-                    
-                    <div class="hidden lg:flex items-center gap-3 pl-3 border-l border-slate-300 dark:border-slate-700">
-                        <div class="text-right">
-                            <div class="text-xs text-slate-400">Всего рейсов</div>
-                            <div id="stat-flight-count" class="text-sm font-bold text-sky-500">0</div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -132,68 +139,119 @@
             </button>
             <button onclick="switchTab('add-flight')" id="mob-tab-add-flight" class="mob-nav-tab flex-1 py-2 text-center text-xs text-slate-500 dark:text-slate-400">
                 <i class="fa-solid fa-plus-circle block text-base mb-0.5"></i> + Рейс
+                <i class="fa-solid fa-lock text-[10px] text-amber-500 admin-lock-icon ml-0.5"></i>
             </button>
             <button onclick="switchTab('add-city')" id="mob-tab-add-city" class="mob-nav-tab flex-1 py-2 text-center text-xs text-slate-500 dark:text-slate-400">
                 <i class="fa-solid fa-city block text-base mb-0.5"></i> Города
+                <i class="fa-solid fa-lock text-[10px] text-amber-500 admin-lock-icon ml-0.5"></i>
             </button>
         </div>
     </header>
 
-    <!-- Global Simulation Watermark / Banner -->
-    <div class="bg-amber-500/10 border-b border-amber-500/20 text-amber-700 dark:text-amber-300 px-4 py-2 text-center text-xs font-medium">
-        <i class="fa-solid fa-circle-info mr-1.5"></i> Сайт находится в beta-версии, и не все функции могут корректно функционировать.
-    </div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Access Denied Alert -->
+        <div id="access-denied-box" class="hidden max-w-xl mx-auto py-12 text-center glass-panel rounded-2xl border border-amber-500/30 p-8 my-6">
+            <div class="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-user-shield text-3xl"></i>
+            </div>
+            <h3 class="font-extrabold text-slate-900 dark:text-white text-xl">Доступ ограничен</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                Регистрация новых рейсов и городов доступна только <strong class="text-slate-800 dark:text-slate-200">Владельцу AeroSim</strong>.
+            </p>
+            <div class="mt-6 flex justify-center gap-3">
+                <button onclick="openAuthModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-key"></i> Войти как Владелец
+                </button>
+                <button onclick="switchTab('board')" class="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-xl transition">
+                    К списку рейсов
+                </button>
+            </div>
+        </div>
 
+        <!-- SECTION: FLIGHT BOARD & CITY SEARCH -->
         <section id="section-board" class="space-y-6">
-            <!-- Search & Filters -->
+            
+            <!-- City Search and Filter Panel -->
             <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-sky-500"></i> Онлайн-табло и поиск
+                            <i class="fa-solid fa-magnifying-glass-location text-sky-500"></i> Онлайн-поиск авиарейсов по городам
                         </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Поиск вымышленных рейсов по направлению и дате</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Укажите города отправления и назначения для фильтрации</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="resetFilters()" class="px-3 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg transition">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> Сбросить фильтры
+                        <button onclick="resetFilters()" class="px-3.5 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-200/60 dark:bg-slate-800/60 hover:bg-slate-300/60 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-rotate-left"></i> Сбросить поиск
                         </button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-                    <!-- Search Input -->
-                    <div class="relative">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
-                        <input type="text" id="filter-search" oninput="renderFlights()" placeholder="Поиск города, ИАТА или номера..." 
-                            class="w-full pl-9 pr-3 py-2 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                <!-- Main City Search Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 pt-2 items-center">
+                    
+                    <!-- Origin Input -->
+                    <div class="lg:col-span-5 relative">
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-plane-departure text-sky-500 mr-1"></i> Откуда (Город / Аэропорт)
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-location-dot absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                            <input type="text" id="filter-origin-text" list="cities-datalist" oninput="renderFlights()" placeholder="Например: Москва, UTP или Токио..." 
+                                class="w-full pl-9 pr-8 py-2.5 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white font-medium">
+                            <button onclick="clearInput('filter-origin-text')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                                <i class="fa-solid fa-circle-xmark text-xs"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Departure Filter -->
-                    <div>
-                        <select id="filter-origin" onchange="renderFlights()" 
-                            class="w-full px-3 py-2 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                            <option value="">Откуда: Все города</option>
-                        </select>
+                    <!-- Swap Direction Button -->
+                    <div class="lg:col-span-1 flex justify-center pt-2 lg:pt-5">
+                        <button onclick="swapCitiesSearch()" title="Поменять местами Откуда ⇄ Куда" 
+                            class="p-2.5 bg-sky-500/10 hover:bg-sky-500 text-sky-600 hover:text-white dark:bg-slate-800 dark:text-sky-400 dark:hover:bg-sky-500 dark:hover:text-white rounded-xl border border-sky-500/20 transition shadow-sm group">
+                            <i class="fa-solid fa-arrows-rotate text-sm transition-transform duration-300 group-hover:rotate-180"></i>
+                        </button>
                     </div>
 
-                    <!-- Arrival Filter -->
-                    <div>
-                        <select id="filter-destination" onchange="renderFlights()" 
-                            class="w-full px-3 py-2 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                            <option value="">Куда: Все города</option>
-                        </select>
+                    <!-- Destination Input -->
+                    <div class="lg:col-span-5 relative">
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-plane-arrival text-indigo-500 mr-1"></i> Куда (Город / Аэропорт)
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-location-dot absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                            <input type="text" id="filter-destination-text" list="cities-datalist" oninput="renderFlights()" placeholder="Например: Сидней, NRN или Паттайя..." 
+                                class="w-full pl-9 pr-8 py-2.5 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white font-medium">
+                            <button onclick="clearInput('filter-destination-text')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                                <i class="fa-solid fa-circle-xmark text-xs"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Date Filter -->
-                    <div>
-                        <input type="date" id="filter-date" onchange="renderFlights()" 
-                            class="w-full px-3 py-2 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                    <!-- Global Quick Filter Dropdowns -->
+                    <div class="lg:col-span-12 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                        <div>
+                            <select id="filter-origin" onchange="syncSelectToInput('filter-origin', 'filter-origin-text')" 
+                                class="w-full px-3 py-2 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                                <option value="">Быстрый выбор вылета (Все)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filter-destination" onchange="syncSelectToInput('filter-destination', 'filter-destination-text')" 
+                                class="w-full px-3 py-2 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                                <option value="">Быстрый выбор прилета (Все)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input type="date" id="filter-date" onchange="renderFlights()" 
+                                class="w-full px-3 py-2 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                        </div>
                     </div>
                 </div>
+
+                <!-- Dynamic HTML Datalist for Auto-complete -->
+                <datalist id="cities-datalist"></datalist>
             </div>
 
             <!-- Flights Container Grid -->
@@ -201,268 +259,314 @@
                 <!-- Dynamic flight cards injected here -->
             </div>
 
-            <!-- Empty State -->
-            <div id="flights-empty" class="hidden text-center py-12 glass-panel rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
-                <div class="w-16 h-16 bg-sky-100 dark:bg-slate-800 text-sky-500 rounded-full flex items-center justify-center mx-auto mb-3">
+            <!-- Empty State Container -->
+            <div id="flights-empty" class="hidden text-center py-16 glass-panel rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+                <div class="w-16 h-16 bg-sky-500/10 text-sky-500 rounded-full flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-plane-slash text-2xl"></i>
                 </div>
-                <h3 class="font-bold text-slate-800 dark:text-white text-lg">Рейсы не найдены</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1">Попробуйте изменить параметры поиска или создайте новый рейс во вкладке "Создать рейс".</p>
+                <h3 class="font-bold text-slate-800 dark:text-slate-200 text-lg">Рейсы не найдены</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1">
+                    По вашему запросу не найдено ни одного авиарейса. Попробуйте сбросить параметры поиска.
+                </p>
+                <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-xl shadow transition">
+                    Сбросить все фильтры
+                </button>
             </div>
         </section>
 
-        <section id="section-add-flight" class="hidden max-w-3xl mx-auto">
-            <div class="glass-panel p-6 sm:p-8 rounded-2xl shadow-md border border-slate-200 dark:border-slate-800">
-                <div class="border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
-                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <i class="fa-solid fa-circle-plus text-sky-500"></i> Регистрация нового рейса
-                    </h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Заполните детали симулируемого авиаперелёта</p>
+        <!-- SECTION: CREATE FLIGHT (Owner Only) -->
+        <section id="section-add-flight" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="glass-panel p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-5">
+                    <div class="p-3 bg-sky-500/10 text-sky-500 rounded-xl">
+                        <i class="fa-solid fa-plane-circle-plus text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Регистрация нового авиарейса</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Форма создания перелета для владельца</p>
+                    </div>
                 </div>
 
-                <form id="form-add-flight" onsubmit="handleCreateFlight(event)" class="space-y-5">
-                    <!-- Airline & Flight Number -->
+                <form id="form-add-flight" onsubmit="handleCreateFlight(event)" class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Авиакомпания *</label>
-                            <input type="text" id="flight-airline" required placeholder="Напр. AeroSky, Nordic Air" 
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Авиакомпания *</label>
+                            <input type="text" id="flight-airline" required placeholder="Например: AeroSky, Air Pacific" 
                                 class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Номер рейса *</label>
-                            <input type="text" id="flight-number" required placeholder="Напр. AS-742, SU-102" 
-                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Номер рейса *</label>
+                            <input type="text" id="flight-number" required placeholder="Например: AS-742, UN-991" 
+                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white font-mono">
                         </div>
                     </div>
 
-                    <!-- Origin & Destination -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Пункт вылета *</label>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Пункт вылета (Откуда) *</label>
                             <select id="flight-origin" required class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
                                 <option value="">Выберите аэропорт вылета</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Пункт назначения *</label>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Пункт назначения (Куда) *</label>
                             <select id="flight-destination" required class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
                                 <option value="">Выберите аэропорт назначения</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Date & Times -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Дата *</label>
-                            <input type="date" id="flight-date" required class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Время вылета *</label>
-                            <input type="time" id="flight-dep-time" required class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Время прилёта *</label>
-                            <input type="time" id="flight-arr-time" required class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                        </div>
-                    </div>
-
-                    <!-- Price & Currency -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="sm:col-span-2">
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Стоимость билета *</label>
-                            <input type="number" min="1" step="0.01" id="flight-price" required placeholder="15000" 
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Дата вылета *</label>
+                            <input type="date" id="flight-date" required 
                                 class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Валюта *</label>
-                            <select id="flight-currency" required class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                                <option value="RUB">RUB (₽)</option>
-                                <option value="USD">USD ($)</option>
-                                <option value="EUR">EUR (€)</option>
-                            </select>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Время вылета *</label>
+                            <input type="time" id="flight-dep-time" required 
+                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Время прилета *</label>
+                            <input type="time" id="flight-arr-time" required 
+                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
                         </div>
                     </div>
 
-                    <!-- Aircraft Type -->
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Тип воздушного судна</label>
-                        <select id="flight-aircraft" class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                            <option value="Airbus A319">Airbus A319</option>
-                            <option value="Airbus A320">Airbus A320</option>
-                            <option value="Airbus A321(neo)">Airbus A321(neo)</option>
-                            <option value="Boeing 737-800">Boeing 737-800</option>
-                            <option value="Boeing 767-300">Boeing 767-300</option>
-                            <option value="Boeing 787-800">Boeing 787-800</option>
-                            <option value="Boeing 777-300ER">Boeing 777-300ER</option>
-                            <option value="Sukhoi Superjet 100">Sukhoi Superjet 100</option>
-                            <option value="Embraer E190">Embraer E190</option>
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Стоимость билета *</label>
+                            <div class="flex">
+                                <input type="number" id="flight-price" required min="1" step="any" placeholder="15000" 
+                                    class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-l-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                                <select id="flight-currency" class="bg-slate-100 dark:bg-slate-700 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-xl px-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                    <option value="RUB">RUB (₽)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="EUR">EUR (€)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Самолет</label>
+                            <input type="text" id="flight-aircraft" placeholder="Airbus A320" 
+                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+                        </div>
                     </div>
 
-                    <!-- Form Error Display -->
                     <div id="flight-form-error" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-medium"></div>
 
-                    <!-- Submit Button -->
                     <div class="pt-2">
-                        <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-sky-500/25 transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i> Зарегистрировать рейс
+                        <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-500/20 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Опубликовать рейс в расписании
                         </button>
                     </div>
                 </form>
             </div>
         </section>
 
-        <section id="section-add-city" class="hidden space-y-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Add City Form Column -->
-                <div class="lg:col-span-1">
-                    <div class="glass-panel p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-800 sticky top-24">
-                        <div class="border-b border-slate-200 dark:border-slate-800 pb-3 mb-5">
-                            <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <i class="fa-solid fa-location-dot text-sky-500"></i> Добавить город
-                            </h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Регистрация аэропорта</p>
+        <!-- SECTION: REGISTER CITY & AIRPORT (Owner Only) -->
+        <section id="section-add-city" class="hidden max-w-4xl mx-auto space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- City Form -->
+                <div class="md:col-span-5 glass-panel p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-800 h-fit">
+                    <div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-5">
+                        <div class="p-3 bg-indigo-500/10 text-indigo-500 rounded-xl">
+                            <i class="fa-solid fa-city text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Новый город и аэропорт</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Регистрация локации</p>
+                        </div>
+                    </div>
+
+                    <form id="form-add-city" onsubmit="handleCreateCity(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Название города *</label>
+                            <input type="text" id="city-name" required placeholder="Например: Нуринам, Паттайя" 
+                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white">
                         </div>
 
-                        <form id="form-add-city" onsubmit="handleCreateCity(event)" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Город *</label>
-                                <input type="text" id="city-name" required placeholder="Напр. Паттайя, Нуринам" 
-                                    class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                            </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Страна / Регион *</label>
+                            <input type="text" id="city-country" required placeholder="Например: Океания, Таиланд" 
+                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white">
+                        </div>
 
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Страна *</label>
-                                <input type="text" id="city-country" required placeholder="Напр. Таиланд, Океания" 
-                                    class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                            </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Название аэропорта *</label>
+                            <input type="text" id="city-airport" required placeholder="Например: Международный Ландои" 
+                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white">
+                        </div>
 
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Название аэропорта *</label>
-                                <input type="text" id="city-airport" required placeholder="Напр. У-Тапао, Ландои Интл" 
-                                    class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                            </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Код IATA (3 буквы) *</label>
+                            <input type="text" id="city-iata" required maxlength="3" placeholder="NRN" 
+                                class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white uppercase font-mono font-bold tracking-widest">
+                        </div>
 
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Код IATA (3 буквы) *</label>
-                                <input type="text" id="city-iata" maxlength="3" required placeholder="UTP" 
-                                    class="w-full px-3.5 py-2.5 uppercase tracking-widest font-mono bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
-                            </div>
+                        <div id="city-form-error" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-medium"></div>
 
-                            <div id="city-form-error" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-medium"></div>
-
-                            <button type="submit" class="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
-                                <i class="fa-solid fa-plus"></i> Сохранить аэропорт
-                            </button>
-                        </form>
-                    </div>
+                        <button type="submit" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/20 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-map-pin"></i> Добавить аэропорт в базу
+                        </button>
+                    </form>
                 </div>
 
-                <!-- City List Column -->
-                <div class="lg:col-span-2 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Зарегистрированные города & аэропорты</h3>
-                        <span id="city-count-badge" class="px-2.5 py-1 bg-slate-200 dark:bg-slate-800 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-300">0 локаций</span>
+                <!-- City List -->
+                <div class="md:col-span-7 space-y-4">
+                    <div class="glass-panel p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white text-base">База зарегистрированных городов</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Доступные локации для формирования рейсов</p>
+                        </div>
+                        <span id="city-count-badge" class="px-2.5 py-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold text-xs rounded-lg">
+                            0 локаций
+                        </span>
                     </div>
 
-                    <div id="cities-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div id="cities-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-1">
                         <!-- Dynamic city cards injected here -->
                     </div>
                 </div>
+
             </div>
         </section>
 
     </main>
 
-    <div id="booking-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
-        <div class="glass-panel bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transform transition-all">
-            <!-- Modal Header -->
-            <div class="p-5 bg-gradient-to-r from-sky-600 to-indigo-700 text-white flex justify-between items-start">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-md">
-                        Бронирование
-                    </span>
-                    <h3 id="modal-flight-number" class="text-xl font-black mt-1">Рейс</h3>
-                    <p id="modal-flight-route" class="text-xs text-sky-100 opacity-90"></p>
+    <!-- OWNER AUTH MODAL -->
+    <div id="auth-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+        <div class="glass-panel bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transform transition-all">
+            <div class="p-5 bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex justify-between items-center border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base">Авторизация владельца</h3>
+                        <p class="text-xs text-slate-400">Панель управления Avialines</p>
+                    </div>
                 </div>
-                <button onclick="closeBookingModal()" class="text-white/80 hover:text-white text-xl">
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- Modal Content -->
-            <div class="p-6 space-y-5">
-                <!-- Passenger Name Form -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Имя и Фамилия пассажира *</label>
-                    <input type="text" id="passenger-name" placeholder="Иван Иванов" 
-                        class="w-full px-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
+            <form id="form-auth" onsubmit="handleAuthSubmit(event)" class="p-6 space-y-4">
+                <div id="auth-logged-out-view" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Мастер-пароль *</label>
+                        <input type="password" id="auth-password" required placeholder="Введите пароль..." 
+                            class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-white">
+                        <p class="text-[11px] text-slate-400 mt-1">Права на эту страницу доступны только <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-amber-600 dark:text-amber-400 font-mono">владельцу</code></p>
+                    </div>
+                    <div id="auth-error" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-medium"></div>
+
+                    <button type="submit" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i> Подтвердить вход
+                    </button>
                 </div>
 
-                <!-- Seat Selection Scheme -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">Выберите место в салоне</label>
-                    <div class="bg-slate-100 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/60">
-                        <div class="text-center text-xs text-slate-400 mb-3 font-medium uppercase tracking-widest">
-                            <i class="fa-solid fa-arrow-up mr-1"></i> Кабина пилотов <i class="fa-solid fa-arrow-up ml-1"></i>
-                        </div>
-                        
-                        <!-- Mini plane seats grid -->
-                        <div id="seats-grid" class="grid grid-cols-6 gap-2 max-w-xs mx-auto text-center font-mono text-xs font-bold">
-                            <!-- Seats injected dynamically -->
-                        </div>
+                <div id="auth-logged-in-view" class="hidden text-center py-4 space-y-4">
+                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+                        <i class="fa-solid fa-check text-2xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-white">Режим Владельца активен</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Вам доступны функции создания рейсов, городов и их удаления.</p>
+                    </div>
+                    <button type="button" onclick="handleLogout()" class="w-full py-2.5 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-semibold text-xs rounded-xl border border-red-500/20 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Выйти из режима владельца
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                        <div class="flex items-center justify-center gap-4 mt-4 text-[11px] text-slate-500 dark:text-slate-400">
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-slate-200 dark:bg-slate-700 rounded"></span> Свободно</span>
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-sky-500 rounded"></span> Выбрано</span>
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-red-400 dark:bg-red-900/60 rounded"></span> Занято</span>
-                        </div>
+    <!-- BOOKING SIMULATOR MODAL -->
+    <div id="booking-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+        <div class="glass-panel bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transform transition-all">
+            <div class="p-5 bg-gradient-to-r from-sky-600 to-indigo-600 text-white flex justify-between items-center">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-ticket text-2xl"></i>
+                    <div>
+                        <h3 class="font-bold text-base">Бронирование билета</h3>
+                        <p class="text-xs text-sky-100" id="modal-flight-number">Рейс AS-742</p>
+                    </div>
+                </div>
+                <button onclick="closeBookingModal()" class="text-white/80 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-5">
+                <div class="bg-slate-100 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/60 text-xs space-y-1">
+                    <div class="flex justify-between font-semibold text-slate-800 dark:text-slate-200">
+                        <span>Маршрут:</span>
+                        <span id="modal-flight-route">Москва ➔ Паттайя</span>
+                    </div>
+                    <div class="flex justify-between text-slate-500 dark:text-slate-400">
+                        <span>Стоимость:</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400 text-sm" id="modal-flight-price">24 500 ₽</span>
                     </div>
                 </div>
 
-                <!-- Price summary -->
-                <div class="flex justify-between items-center p-3 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/30">
-                    <span class="text-xs font-semibold text-sky-900 dark:text-sky-200">Итого к оплате:</span>
-                    <span id="modal-flight-price" class="text-lg font-black text-sky-600 dark:text-sky-400"></span>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">ФИО Пассажира *</label>
+                    <input type="text" id="passenger-name" placeholder="Иванов Иван Иванович" 
+                        class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none dark:text-white">
                 </div>
-            </div>
 
-            <!-- Modal Footer -->
-            <div class="p-4 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
-                <button onclick="closeBookingModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition">
-                    Отмена
-                </button>
-                <button onclick="confirmBooking()" class="px-5 py-2 text-xs font-semibold bg-sky-600 hover:bg-sky-700 text-white rounded-xl shadow-md transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-ticket"></i> Забронировать
-                </button>
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Выберите место в салоне *</label>
+                        <span class="text-[10px] text-slate-400">Схема 2х2</span>
+                    </div>
+
+                    <div id="seats-grid" class="grid grid-cols-7 gap-2 p-3 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+                        <!-- Seats dynamically generated -->
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="confirmBooking()" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-check-circle"></i> Оформить билет
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
+    <!-- Notification Toast Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <script>
+        // Application State & Auth Status
+        let isOwnerMode = localStorage.getItem('avialines_is_owner') === 'true';
+        let ownerPassword = localStorage.getItem('avialines_owner_pass') || '726Cow178';
+
         // Initial Default Cities Data
         const defaultCities = [
-            { id: 'city-1', name: 'Нуринам', country: 'Россия', airport: 'Нуринамский Международный Аэропорт имени Ю.Сенкевича', iata: 'NRM' },
-            { id: 'city-2', name: 'У-Тапао', country: 'Таиланд', airport: 'У-Тапао (U-Tapao)', iata: 'UTP' },
+            { id: 'city-1', name: 'Нуринам', country: 'Океания', airport: 'Ландои Интл', iata: 'NRN' },
+            { id: 'city-2', name: 'Паттайя', country: 'Таиланд', airport: 'У-Тапао', iata: 'UTP' },
             { id: 'city-3', name: 'Токио', country: 'Япония', airport: 'Ханеда', iata: 'HND' },
-            { id: 'city-4', name: 'Сидней', country: 'Австралия', airport: 'Кингсфорд Смит', iata: 'SYD' }
+            { id: 'city-4', name: 'Сидней', country: 'Австралия', airport: 'Кингсфорд Смит', iata: 'SYD' },
+            { id: 'city-5', name: 'Москва', country: 'Россия', airport: 'Шереметьево', iata: 'SVO' }
         ];
 
         // Initial Default Flights Data
         const defaultFlights = [
             {
                 id: 'fl-101',
-                airline: 'Nuravia',
+                airline: 'AeroSky',
                 flightNumber: 'AS-742',
-                originId: 'city-1', // NRM
-                destinationId: 'city-2', // UTP
+                originId: 'city-5',
+                destinationId: 'city-2',
                 date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
                 depTime: '10:30',
-                arrTime: '14:45',
+                arrTime: '18:45',
                 price: 24500,
                 currency: 'RUB',
                 aircraft: 'Airbus A320',
@@ -472,8 +576,8 @@
                 id: 'fl-102',
                 airline: 'Pacific Wings',
                 flightNumber: 'PW-109',
-                originId: 'city-2', // UTP
-                destinationId: 'city-3', // HND
+                originId: 'city-2',
+                destinationId: 'city-3',
                 date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
                 depTime: '18:15',
                 arrTime: '23:50',
@@ -484,66 +588,144 @@
             },
             {
                 id: 'fl-103',
-                airline: 'Nordic Express',
-                flightNumber: 'NE-404',
-                originId: 'city-3', // HND
-                destinationId: 'city-4', // SYD
+                airline: 'Oceania Express',
+                flightNumber: 'OE-304',
+                originId: 'city-1',
+                destinationId: 'city-4',
                 date: new Date(Date.now() + 259200000).toISOString().split('T')[0],
                 depTime: '06:00',
-                arrTime: '16:20',
-                price: 450,
-                currency: 'EUR',
-                aircraft: 'Boeing 737-800',
+                arrTime: '11:20',
+                price: 19800,
+                currency: 'RUB',
+                aircraft: 'Boeing 737 MAX',
                 bookedSeats: []
             }
         ];
 
-        // Application State loaded from LocalStorage or Defaults
         let cities = JSON.parse(localStorage.getItem('aero_cities')) || defaultCities;
         let flights = JSON.parse(localStorage.getItem('aero_flights')) || defaultFlights;
         let selectedFlightForBooking = null;
         let selectedSeat = null;
 
-        // Save State Helper
         function saveData() {
             localStorage.setItem('aero_cities', JSON.stringify(cities));
             localStorage.setItem('aero_flights', JSON.stringify(flights));
             updateStats();
         }
 
-        // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
             initTheme();
+            updateOwnerUI();
             populateCitySelects();
             renderCities();
             renderFlights();
             updateStats();
             
-            // Set minimum date input to today
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('flight-date').min = today;
+            const flightDateElem = document.getElementById('flight-date');
+            if (flightDateElem) flightDateElem.min = today;
         });
 
-        function switchTab(tabName) {
-            // Hide all sections
-            document.getElementById('section-board').classList.add('hidden');
-            document.getElementById('section-add-flight').classList.add('hidden');
-            document.getElementById('section-add-city').classList.add('hidden');
+        // Auth & Permissions Handlers
+        function openAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            const error = document.getElementById('auth-error');
+            const loggedOutView = document.getElementById('auth-logged-out-view');
+            const loggedInView = document.getElementById('auth-logged-in-view');
 
-            // Reset tab styles (Desktop)
+            error.classList.add('hidden');
+            document.getElementById('auth-password').value = '';
+
+            if (isOwnerMode) {
+                loggedOutView.classList.add('hidden');
+                loggedInView.classList.remove('hidden');
+            } else {
+                loggedOutView.classList.remove('hidden');
+                loggedInView.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const passInput = document.getElementById('auth-password').value;
+            const error = document.getElementById('auth-error');
+
+            if (passInput === ownerPassword) {
+                isOwnerMode = true;
+                localStorage.setItem('avialines_is_owner', 'true');
+                updateOwnerUI();
+                renderCities();
+                renderFlights();
+                closeAuthModal();
+                showToast('Успешный вход! Режим владельца активирован.', 'success');
+            } else {
+                error.textContent = 'Неверный мастер-пароль владельца!';
+                error.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            isOwnerMode = false;
+            localStorage.setItem('avialines_is_owner', 'false');
+            updateOwnerUI();
+            renderCities();
+            renderFlights();
+            closeAuthModal();
+            switchTab('board');
+            showToast('Вы вышли из режима владельца.', 'info');
+        }
+
+        function updateOwnerUI() {
+            const btnText = document.getElementById('admin-auth-text');
+            const btnIcon = document.getElementById('admin-auth-icon');
+            const lockIcons = document.querySelectorAll('.admin-lock-icon');
+
+            if (isOwnerMode) {
+                btnText.textContent = 'Владелец (Активен)';
+                btnIcon.className = 'fa-solid fa-user-check text-emerald-500';
+                lockIcons.forEach(icon => icon.classList.add('hidden'));
+            } else {
+                btnText.textContent = 'Вход для владельца';
+                btnIcon.className = 'fa-solid fa-lock text-amber-500';
+                lockIcons.forEach(icon => icon.classList.remove('hidden'));
+            }
+        }
+
+        function switchTab(tabName) {
+            const sectionBoard = document.getElementById('section-board');
+            const sectionAddFlight = document.getElementById('section-add-flight');
+            const sectionAddCity = document.getElementById('section-add-city');
+            const deniedBox = document.getElementById('access-denied-box');
+
+            // Hide all
+            sectionBoard.classList.add('hidden');
+            sectionAddFlight.classList.add('hidden');
+            sectionAddCity.classList.add('hidden');
+            deniedBox.classList.add('hidden');
+
+            // Reset tab styles
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('text-sky-600', 'dark:text-sky-400', 'bg-white', 'dark:bg-slate-700', 'shadow-sm', 'font-semibold');
                 tab.classList.add('text-slate-600', 'dark:text-slate-300', 'font-medium');
             });
 
-            // Reset tab styles (Mobile)
             document.querySelectorAll('.mob-nav-tab').forEach(tab => {
                 tab.classList.remove('text-sky-500', 'border-b-2', 'border-sky-500', 'font-semibold');
                 tab.classList.add('text-slate-500', 'dark:text-slate-400');
             });
 
-            // Show selected section & highlight tab
-            document.getElementById(`section-${tabName}`).classList.remove('hidden');
+            // Check Access Rights for Add operations
+            if ((tabName === 'add-flight' || tabName === 'add-city') && !isOwnerMode) {
+                deniedBox.classList.remove('hidden');
+            } else {
+                document.getElementById(`section-${tabName}`).classList.remove('hidden');
+            }
 
             const activeTab = document.getElementById(`tab-${tabName}`);
             if (activeTab) {
@@ -556,6 +738,69 @@
                 activeMobTab.classList.add('text-sky-500', 'border-b-2', 'border-sky-500', 'font-semibold');
                 activeMobTab.classList.remove('text-slate-500', 'dark:text-slate-400');
             }
+        }
+
+        function populateCitySelects() {
+            const filterDep = document.getElementById('filter-origin');
+            const filterArr = document.getElementById('filter-destination');
+            const flightDep = document.getElementById('flight-origin');
+            const flightArr = document.getElementById('flight-destination');
+            const datalist = document.getElementById('cities-datalist');
+
+            const currentDepFilter = filterDep.value;
+            const currentArrFilter = filterArr.value;
+
+            filterDep.innerHTML = '<option value="">Быстрый выбор вылета (Все)</option>';
+            filterArr.innerHTML = '<option value="">Быстрый выбор прилета (Все)</option>';
+            flightDep.innerHTML = '<option value="">Выберите аэропорт вылета</option>';
+            flightArr.innerHTML = '<option value="">Выберите аэропорт назначения</option>';
+            datalist.innerHTML = '';
+
+            cities.forEach(c => {
+                const label = `${c.name} (${c.iata}) - ${c.airport}`;
+                
+                filterDep.innerHTML += `<option value="${c.id}">${label}</option>`;
+                filterArr.innerHTML += `<option value="${c.id}">${label}</option>`;
+                flightDep.innerHTML += `<option value="${c.id}">${label}</option>`;
+                flightArr.innerHTML += `<option value="${c.id}">${label}</option>`;
+
+                datalist.innerHTML += `<option value="${c.name} (${c.iata})"></option>`;
+                datalist.innerHTML += `<option value="${c.iata}"></option>`;
+            });
+
+            filterDep.value = currentDepFilter;
+            filterArr.value = currentArrFilter;
+        }
+
+        function swapCitiesSearch() {
+            const originInput = document.getElementById('filter-origin-text');
+            const destInput = document.getElementById('filter-destination-text');
+
+            const temp = originInput.value;
+            originInput.value = destInput.value;
+            destInput.value = temp;
+
+            renderFlights();
+        }
+
+        function syncSelectToInput(selectId, inputId) {
+            const select = document.getElementById(selectId);
+            const input = document.getElementById(inputId);
+
+            if (select.value) {
+                const city = cities.find(c => c.id === select.value);
+                if (city) {
+                    input.value = `${city.name} (${city.iata})`;
+                }
+            } else {
+                input.value = '';
+            }
+            renderFlights();
+        }
+
+        function clearInput(inputId) {
+            document.getElementById(inputId).value = '';
+            renderFlights();
         }
 
         function renderCities() {
@@ -578,6 +823,12 @@
                 const card = document.createElement('div');
                 card.className = 'glass-panel p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center group hover:border-sky-500/50 transition';
                 
+                const deleteBtnHtml = isOwnerMode ? `
+                    <button onclick="deleteCity('${city.id}')" title="Удалить город (Только для владельца)" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition opacity-0 group-hover:opacity-100">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                ` : '';
+
                 card.innerHTML = `
                     <div class="flex items-center space-x-3.5">
                         <div class="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-mono font-bold flex items-center justify-center text-sm">
@@ -593,42 +844,116 @@
                             </p>
                         </div>
                     </div>
-                    <button onclick="deleteCity('${city.id}')" title="Удалить город" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition opacity-0 group-hover:opacity-100">
-                        <i class="fa-solid fa-trash-can text-sm"></i>
-                    </button>
+                    ${deleteBtnHtml}
                 `;
                 container.appendChild(card);
             });
         }
 
-        function populateCitySelects() {
-            const filterDep = document.getElementById('filter-origin');
-            const filterArr = document.getElementById('filter-destination');
-            const flightDep = document.getElementById('flight-origin');
-            const flightArr = document.getElementById('flight-destination');
+        function renderFlights() {
+            const container = document.getElementById('flights-list');
+            const emptyState = document.getElementById('flights-empty');
+            
+            const originQuery = document.getElementById('filter-origin-text').value.toLowerCase().trim();
+            const destQuery = document.getElementById('filter-destination-text').value.toLowerCase().trim();
+            const dateFilter = document.getElementById('filter-date').value;
 
-            const currentDepFilter = filterDep.value;
-            const currentArrFilter = filterArr.value;
+            container.innerHTML = '';
 
-            // Reset options
-            filterDep.innerHTML = '<option value="">Откуда: Все города</option>';
-            filterArr.innerHTML = '<option value="">Куда: Все города</option>';
-            flightDep.innerHTML = '<option value="">Выберите аэропорт вылета</option>';
-            flightArr.innerHTML = '<option value="">Выберите аэропорт назначения</option>';
+            const filtered = flights.filter(f => {
+                const origin = cities.find(c => c.id === f.originId) || {};
+                const dest = cities.find(c => c.id === f.destinationId) || {};
 
-            cities.forEach(c => {
-                const label = `${c.name} (${c.iata}) - ${c.airport}`;
-                
-                filterDep.innerHTML += `<option value="${c.id}">${label}</option>`;
-                filterArr.innerHTML += `<option value="${c.id}">${label}</option>`;
-                flightDep.innerHTML += `<option value="${c.id}">${label}</option>`;
-                flightArr.innerHTML += `<option value="${c.id}">${label}</option>`;
+                const matchesOrigin = !originQuery || 
+                    (origin.name && origin.name.toLowerCase().includes(originQuery)) ||
+                    (origin.iata && origin.iata.toLowerCase().includes(originQuery)) ||
+                    (origin.airport && origin.airport.toLowerCase().includes(originQuery));
+
+                const matchesDest = !destQuery || 
+                    (dest.name && dest.name.toLowerCase().includes(destQuery)) ||
+                    (dest.iata && dest.iata.toLowerCase().includes(destQuery)) ||
+                    (dest.airport && dest.airport.toLowerCase().includes(destQuery));
+
+                const matchesDate = !dateFilter || f.date === dateFilter;
+
+                return matchesOrigin && matchesDest && matchesDate;
             });
 
-            filterDep.value = currentDepFilter;
-            filterArr.value = currentArrFilter;
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(f => {
+                const origin = cities.find(c => c.id === f.originId) || { name: 'Неизвестно', iata: '???', airport: '---' };
+                const dest = cities.find(c => c.id === f.destinationId) || { name: 'Неизвестно', iata: '???', airport: '---' };
+
+                const formattedPrice = formatCurrency(f.price, f.currency);
+                const formattedDate = formatDate(f.date);
+
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition space-y-4 relative overflow-hidden';
+
+                const deleteFlightBtn = isOwnerMode ? `
+                    <button onclick="deleteFlight('${f.id}')" title="Удалить рейс (Только владельцу)" class="p-2 text-slate-400 hover:text-red-500 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                ` : '';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-900 dark:text-white">${escapeHtml(f.airline)}</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800 font-mono text-[11px]">${escapeHtml(f.flightNumber)}</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-sky-600 dark:text-sky-400 font-medium">
+                            <i class="fa-regular fa-calendar-days"></i> ${formattedDate}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-7 items-center gap-2">
+                        <div class="col-span-3">
+                            <div class="text-2xl font-black text-slate-900 dark:text-white font-mono">${escapeHtml(origin.iata)}</div>
+                            <div class="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">${escapeHtml(origin.name)}</div>
+                            <div class="text-[11px] text-slate-400 truncate">${escapeHtml(origin.airport)}</div>
+                            <div class="mt-1 text-sm font-bold text-sky-600 dark:text-sky-400"><i class="fa-regular fa-clock text-xs mr-1"></i>${f.depTime}</div>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-plane text-sky-500 transform rotate-90 my-1"></i>
+                            <div class="w-full border-t border-dashed border-slate-300 dark:border-slate-700"></div>
+                            <span class="text-[9px] text-slate-400 font-mono mt-1">${escapeHtml(f.aircraft || 'A320')}</span>
+                        </div>
+
+                        <div class="col-span-3 text-right">
+                            <div class="text-2xl font-black text-slate-900 dark:text-white font-mono">${escapeHtml(dest.iata)}</div>
+                            <div class="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">${escapeHtml(dest.name)}</div>
+                            <div class="text-[11px] text-slate-400 truncate">${escapeHtml(dest.airport)}</div>
+                            <div class="mt-1 text-sm font-bold text-indigo-500 dark:text-indigo-400">${f.arrTime} <i class="fa-regular fa-clock text-xs ml-1"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                        <div>
+                            <span class="text-[10px] uppercase text-slate-400 font-semibold tracking-wider block">Стоимость от</span>
+                            <span class="text-xl font-extrabold text-slate-900 dark:text-white">${formattedPrice}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${deleteFlightBtn}
+                            <button onclick="openBookingModal('${f.id}')" class="px-4 py-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-ticket"></i> Забронировать
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
         }
 
+        // Action Handlers
         function handleCreateCity(e) {
             e.preventDefault();
             const errorEl = document.getElementById('city-form-error');
@@ -639,7 +964,6 @@
             const airport = document.getElementById('city-airport').value.trim();
             const iata = document.getElementById('city-iata').value.trim().toUpperCase();
 
-            // Check if IATA already exists
             if (cities.some(c => c.iata === iata)) {
                 errorEl.textContent = 'Аэропорт с таким кодом IATA уже зарегистрирован!';
                 errorEl.classList.remove('hidden');
@@ -664,7 +988,6 @@
         }
 
         function deleteCity(id) {
-            // Check if flights exist with this city
             const hasFlights = flights.some(f => f.originId === id || f.destinationId === id);
             if (hasFlights) {
                 showToast('Нельзя удалить город, к которому привязаны существующие рейсы!', 'error');
@@ -694,7 +1017,6 @@
             const currency = document.getElementById('flight-currency').value;
             const aircraft = document.getElementById('flight-aircraft').value;
 
-            // Validation: Origin !== Destination
             if (originId === destinationId) {
                 errorEl.textContent = 'Пункт вылета и пункт назначения не могут совпадать!';
                 errorEl.classList.remove('hidden');
@@ -716,119 +1038,13 @@
                 bookedSeats: []
             };
 
-            flights.unshift(newFlight); // Add to top
+            flights.unshift(newFlight);
             saveData();
             renderFlights();
             
             document.getElementById('form-add-flight').reset();
             showToast(`Рейс ${flightNumber} успешно создан!`, 'success');
             switchTab('board');
-        }
-
-        function renderFlights() {
-            const container = document.getElementById('flights-list');
-            const emptyState = document.getElementById('flights-empty');
-            
-            const search = document.getElementById('filter-search').value.toLowerCase();
-            const originFilter = document.getElementById('filter-origin').value;
-            const destFilter = document.getElementById('filter-destination').value;
-            const dateFilter = document.getElementById('filter-date').value;
-
-            container.innerHTML = '';
-
-            const filtered = flights.filter(f => {
-                const origin = cities.find(c => c.id === f.originId) || {};
-                const dest = cities.find(c => c.id === f.destinationId) || {};
-
-                const matchesSearch = 
-                    f.flightNumber.toLowerCase().includes(search) ||
-                    f.airline.toLowerCase().includes(search) ||
-                    (origin.name && origin.name.toLowerCase().includes(search)) ||
-                    (origin.iata && origin.iata.toLowerCase().includes(search)) ||
-                    (dest.name && dest.name.toLowerCase().includes(search)) ||
-                    (dest.iata && dest.iata.toLowerCase().includes(search));
-
-                const matchesOrigin = !originFilter || f.originId === originFilter;
-                const matchesDest = !destFilter || f.destinationId === destFilter;
-                const matchesDate = !dateFilter || f.date === dateFilter;
-
-                return matchesSearch && matchesOrigin && matchesDest && matchesDate;
-            });
-
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-                return;
-            } else {
-                emptyState.classList.add('hidden');
-            }
-
-            filtered.forEach(f => {
-                const origin = cities.find(c => c.id === f.originId) || { name: 'Неизвестно', iata: '???', airport: '---' };
-                const dest = cities.find(c => c.id === f.destinationId) || { name: 'Неизвестно', iata: '???', airport: '---' };
-
-                const formattedPrice = formatCurrency(f.price, f.currency);
-                const formattedDate = formatDate(f.date);
-
-                const card = document.createElement('div');
-                card.className = 'glass-panel p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition space-y-4 relative overflow-hidden';
-
-                card.innerHTML = `
-                    <!-- Top Info Line -->
-                    <div class="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/80 pb-3">
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-slate-900 dark:text-white">${escapeHtml(f.airline)}</span>
-                            <span class="px-2 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800 font-mono text-[11px]">${escapeHtml(f.flightNumber)}</span>
-                        </div>
-                        <div class="flex items-center gap-1 text-sky-600 dark:text-sky-400 font-medium">
-                            <i class="fa-regular fa-calendar-days"></i> ${formattedDate}
-                        </div>
-                    </div>
-
-                    <!-- Flight Details (Cities & Flight Graphic) -->
-                    <div class="grid grid-cols-7 items-center gap-2">
-                        <!-- Departure -->
-                        <div class="col-span-3">
-                            <div class="text-2xl font-black text-slate-900 dark:text-white font-mono">${escapeHtml(origin.iata)}</div>
-                            <div class="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">${escapeHtml(origin.name)}</div>
-                            <div class="text-[11px] text-slate-400 truncate">${escapeHtml(origin.airport)}</div>
-                            <div class="mt-1 text-sm font-bold text-sky-600 dark:text-sky-400"><i class="fa-regular fa-clock text-xs mr-1"></i>${f.depTime}</div>
-                        </div>
-
-                        <!-- Route Visual Line -->
-                        <div class="col-span-1 flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-plane text-sky-500 transform rotate-90 my-1"></i>
-                            <div class="w-full border-t border-dashed border-slate-300 dark:border-slate-700"></div>
-                            <span class="text-[9px] text-slate-400 font-mono mt-1">${escapeHtml(f.aircraft || 'A320')}</span>
-                        </div>
-
-                        <!-- Arrival -->
-                        <div class="col-span-3 text-right">
-                            <div class="text-2xl font-black text-slate-900 dark:text-white font-mono">${escapeHtml(dest.iata)}</div>
-                            <div class="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">${escapeHtml(dest.name)}</div>
-                            <div class="text-[11px] text-slate-400 truncate">${escapeHtml(dest.airport)}</div>
-                            <div class="mt-1 text-sm font-bold text-indigo-500 dark:text-indigo-400">${f.arrTime} <i class="fa-regular fa-clock text-xs ml-1"></i></div>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Price & Booking Button -->
-                    <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800/80">
-                        <div>
-                            <span class="text-[10px] uppercase text-slate-400 font-semibold tracking-wider block">Стоимость от</span>
-                            <span class="text-xl font-extrabold text-slate-900 dark:text-white">${formattedPrice}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="deleteFlight('${f.id}')" title="Удалить рейс" class="p-2 text-slate-400 hover:text-red-500 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                            <button onclick="openBookingModal('${f.id}')" class="px-4 py-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
-                                <i class="fa-solid fa-ticket"></i> Забронировать
-                            </button>
-                        </div>
-                    </div>
-                `;
-
-                container.appendChild(card);
-            });
         }
 
         function deleteFlight(id) {
@@ -839,7 +1055,8 @@
         }
 
         function resetFilters() {
-            document.getElementById('filter-search').value = '';
+            document.getElementById('filter-origin-text').value = '';
+            document.getElementById('filter-destination-text').value = '';
             document.getElementById('filter-origin').value = '';
             document.getElementById('filter-destination').value = '';
             document.getElementById('filter-date').value = '';
@@ -860,7 +1077,6 @@
             document.getElementById('modal-flight-price').textContent = formatCurrency(selectedFlightForBooking.price, selectedFlightForBooking.currency);
 
             renderSeatsGrid();
-
             document.getElementById('booking-modal').classList.remove('hidden');
         }
 
@@ -878,7 +1094,7 @@
             const cols = ['A', 'B', 'C', 'D', 'E', 'F'];
 
             rows.forEach(row => {
-                cols.forEach((col, idx) => {
+                cols.forEach((col) => {
                     const seatCode = `${row}${col}`;
                     const isOccupied = selectedFlightForBooking.bookedSeats.includes(seatCode);
 
@@ -908,7 +1124,6 @@
 
                     grid.appendChild(seatBtn);
 
-                    // Add central aisle spacing after column C
                     if (col === 'C') {
                         const spacer = document.createElement('div');
                         spacer.className = 'col-span-0 opacity-0 pointer-events-none';
@@ -931,7 +1146,6 @@
                 return;
             }
 
-            // Save booked seat to flight
             selectedFlightForBooking.bookedSeats.push(selectedSeat);
             saveData();
 
@@ -943,7 +1157,7 @@
         }
 
         function updateStats() {
-            document.getElementById('stat-flight-count').textContent = flights.length;
+            // Internal stats update counter
         }
 
         function formatCurrency(val, currency) {
@@ -986,12 +1200,10 @@
 
             container.appendChild(toast);
 
-            // Animate in
             setTimeout(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
             }, 10);
 
-            // Remove after delay
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-2');
                 setTimeout(() => toast.remove(), 300);
