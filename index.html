@@ -93,9 +93,9 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">AeroSim</h1>
+                            <h1 class="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">Avialines</h1>
                             <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
-                                <i class="fa-solid fa-triangle-exclamation mr-1"></i>BETA
+                                <i class="fa-solid fa-cloud mr-1"></i>BETA
                             </span>
                         </div>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Управление авиаперелетами</p>
@@ -157,7 +157,7 @@
             </div>
             <h3 class="font-extrabold text-slate-900 dark:text-white text-xl">Доступ ограничен</h3>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
-                Регистрация новых рейсов и городов доступна только <strong class="text-slate-800 dark:text-slate-200">Владельцу AeroSim</strong>.
+                Регистрация новых рейсов и городов доступна только <strong class="text-slate-800 dark:text-slate-200">Владельцу Avialines</strong>.
             </p>
             <div class="mt-6 flex justify-center gap-3">
                 <button onclick="openAuthModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center gap-2">
@@ -460,7 +460,7 @@
                         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Мастер-пароль *</label>
                         <input type="password" id="auth-password" required placeholder="Введите пароль..." 
                             class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none dark:text-white">
-                        <p class="text-[11px] text-slate-400 mt-1">Права на эту страницу доступны только <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-amber-600 dark:text-amber-400 font-mono">владельцу</code></p>
+                        <p class="text-[11px] text-slate-400 mt-1">Эта страница доступна только для <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-amber-600 dark:text-amber-400 font-mono">владельца</code></p>
                     </div>
                     <div id="auth-error" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-medium"></div>
 
@@ -542,12 +542,45 @@
     <!-- Notification Toast Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <script>
-        // Application State & Auth Status
+    <!-- Firebase Cloud Storage & App Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            deleteDoc, 
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global environment variables provided by runtime or fallback defaults
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'avialines-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "AIzaSyDemoKeyOnlyForFallback123456",
+                authDomain: "avialines-demo.firebaseapp.com",
+                projectId: "avialines-demo",
+                storageBucket: "avialines-demo.appspot.com",
+                messagingSenderId: "123456789",
+                appId: "1:123456789:web:abcdef123456"
+            };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
         let isOwnerMode = localStorage.getItem('avialines_is_owner') === 'true';
         let ownerPassword = localStorage.getItem('avialines_owner_pass') || '726Cow178';
 
-        // Initial Default Cities Data
         const defaultCities = [
             { id: 'city-1', name: 'Нуринам', country: 'Океания', airport: 'Ландои Интл', iata: 'NRN' },
             { id: 'city-2', name: 'Паттайя', country: 'Таиланд', airport: 'У-Тапао', iata: 'UTP' },
@@ -556,7 +589,6 @@
             { id: 'city-5', name: 'Москва', country: 'Россия', airport: 'Шереметьево', iata: 'SVO' }
         ];
 
-        // Initial Default Flights Data
         const defaultFlights = [
             {
                 id: 'fl-101',
@@ -602,32 +634,88 @@
             }
         ];
 
-        let cities = JSON.parse(localStorage.getItem('aero_cities')) || defaultCities;
-        let flights = JSON.parse(localStorage.getItem('aero_flights')) || defaultFlights;
+        let cities = [];
+        let flights = [];
         let selectedFlightForBooking = null;
         let selectedSeat = null;
 
-        function saveData() {
-            localStorage.setItem('aero_cities', JSON.stringify(cities));
-            localStorage.setItem('aero_flights', JSON.stringify(flights));
-            updateStats();
+        async function initCloudAuthAndData() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = userCredential.user;
+                } else {
+                    const userCredential = await signInAnonymously(auth);
+                    currentUser = userCredential.user;
+                }
+            } catch (err) {
+                console.warn("Auth initial state fallback to anonymous:", err);
+            }
+
+            // Public Collection Paths Rule 1
+            const citiesRef = collection(db, 'artifacts', appId, 'public', 'data', 'cities');
+            const flightsRef = collection(db, 'artifacts', appId, 'public', 'data', 'flights');
+
+            // Subscribe to Cities
+            onSnapshot(citiesRef, (snapshot) => {
+                const loadedCities = [];
+                snapshot.forEach(docSnap => {
+                    loadedCities.push(docSnap.data());
+                });
+
+                if (loadedCities.length === 0 && isOwnerMode) {
+                    // Seed initial data if database is empty
+                    defaultCities.forEach(async (c) => {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cities', c.id), c);
+                    });
+                } else {
+                    cities = loadedCities;
+                    populateCitySelects();
+                    renderCities();
+                    renderFlights();
+                }
+            }, (error) => {
+                console.error("Cities snapshot error:", error);
+                // Local fallback if cloud isn't available
+                if (cities.length === 0) cities = defaultCities;
+                populateCitySelects();
+                renderCities();
+            });
+
+            // Subscribe to Flights
+            onSnapshot(flightsRef, (snapshot) => {
+                const loadedFlights = [];
+                snapshot.forEach(docSnap => {
+                    loadedFlights.push(docSnap.data());
+                });
+
+                if (loadedFlights.length === 0 && isOwnerMode) {
+                    // Seed initial flights
+                    defaultFlights.forEach(async (f) => {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'flights', f.id), f);
+                    });
+                } else {
+                    flights = loadedFlights;
+                    renderFlights();
+                }
+            }, (error) => {
+                console.error("Flights snapshot error:", error);
+                if (flights.length === 0) flights = defaultFlights;
+                renderFlights();
+            });
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             initTheme();
             updateOwnerUI();
-            populateCitySelects();
-            renderCities();
-            renderFlights();
-            updateStats();
+            initCloudAuthAndData();
             
             const today = new Date().toISOString().split('T')[0];
             const flightDateElem = document.getElementById('flight-date');
             if (flightDateElem) flightDateElem.min = today;
         });
 
-        // Auth & Permissions Handlers
-        function openAuthModal() {
+        window.openAuthModal = function() {
             const modal = document.getElementById('auth-modal');
             const error = document.getElementById('auth-error');
             const loggedOutView = document.getElementById('auth-logged-out-view');
@@ -645,13 +733,13 @@
             }
 
             modal.classList.remove('hidden');
-        }
+        };
 
-        function closeAuthModal() {
+        window.closeAuthModal = function() {
             document.getElementById('auth-modal').classList.add('hidden');
-        }
+        };
 
-        function handleAuthSubmit(e) {
+        window.handleAuthSubmit = function(e) {
             e.preventDefault();
             const passInput = document.getElementById('auth-password').value;
             const error = document.getElementById('auth-error');
@@ -668,9 +756,9 @@
                 error.textContent = 'Неверный мастер-пароль владельца!';
                 error.classList.remove('hidden');
             }
-        }
+        };
 
-        function handleLogout() {
+        window.handleLogout = function() {
             isOwnerMode = false;
             localStorage.setItem('avialines_is_owner', 'false');
             updateOwnerUI();
@@ -679,7 +767,7 @@
             closeAuthModal();
             switchTab('board');
             showToast('Вы вышли из режима владельца.', 'info');
-        }
+        };
 
         function updateOwnerUI() {
             const btnText = document.getElementById('admin-auth-text');
@@ -697,19 +785,17 @@
             }
         }
 
-        function switchTab(tabName) {
+        window.switchTab = function(tabName) {
             const sectionBoard = document.getElementById('section-board');
             const sectionAddFlight = document.getElementById('section-add-flight');
             const sectionAddCity = document.getElementById('section-add-city');
             const deniedBox = document.getElementById('access-denied-box');
 
-            // Hide all
             sectionBoard.classList.add('hidden');
             sectionAddFlight.classList.add('hidden');
             sectionAddCity.classList.add('hidden');
             deniedBox.classList.add('hidden');
 
-            // Reset tab styles
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('text-sky-600', 'dark:text-sky-400', 'bg-white', 'dark:bg-slate-700', 'shadow-sm', 'font-semibold');
                 tab.classList.add('text-slate-600', 'dark:text-slate-300', 'font-medium');
@@ -720,7 +806,6 @@
                 tab.classList.add('text-slate-500', 'dark:text-slate-400');
             });
 
-            // Check Access Rights for Add operations
             if ((tabName === 'add-flight' || tabName === 'add-city') && !isOwnerMode) {
                 deniedBox.classList.remove('hidden');
             } else {
@@ -738,7 +823,7 @@
                 activeMobTab.classList.add('text-sky-500', 'border-b-2', 'border-sky-500', 'font-semibold');
                 activeMobTab.classList.remove('text-slate-500', 'dark:text-slate-400');
             }
-        }
+        };
 
         function populateCitySelects() {
             const filterDep = document.getElementById('filter-origin');
@@ -772,7 +857,7 @@
             filterArr.value = currentArrFilter;
         }
 
-        function swapCitiesSearch() {
+        window.swapCitiesSearch = function() {
             const originInput = document.getElementById('filter-origin-text');
             const destInput = document.getElementById('filter-destination-text');
 
@@ -781,9 +866,9 @@
             destInput.value = temp;
 
             renderFlights();
-        }
+        };
 
-        function syncSelectToInput(selectId, inputId) {
+        window.syncSelectToInput = function(selectId, inputId) {
             const select = document.getElementById(selectId);
             const input = document.getElementById(inputId);
 
@@ -796,12 +881,12 @@
                 input.value = '';
             }
             renderFlights();
-        }
+        };
 
-        function clearInput(inputId) {
+        window.clearInput = function(inputId) {
             document.getElementById(inputId).value = '';
             renderFlights();
-        }
+        };
 
         function renderCities() {
             const container = document.getElementById('cities-list');
@@ -814,7 +899,7 @@
                 container.innerHTML = `
                     <div class="col-span-full py-8 text-center text-slate-400">
                         <i class="fa-solid fa-building-circle-exclamation text-3xl mb-2"></i>
-                        <p class="text-sm">Нет зарегистрированных городов</p>
+                        <p class="text-sm">Нет зарегистрированных городов в облаке</p>
                     </div>`;
                 return;
             }
@@ -824,7 +909,7 @@
                 card.className = 'glass-panel p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex justify-between items-center group hover:border-sky-500/50 transition';
                 
                 const deleteBtnHtml = isOwnerMode ? `
-                    <button onclick="deleteCity('${city.id}')" title="Удалить город (Только для владельца)" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition opacity-0 group-hover:opacity-100">
+                    <button onclick="deleteCity('${city.id}')" title="Удалить город" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition opacity-0 group-hover:opacity-100">
                         <i class="fa-solid fa-trash-can text-sm"></i>
                     </button>
                 ` : '';
@@ -850,7 +935,7 @@
             });
         }
 
-        function renderFlights() {
+        window.renderFlights = function() {
             const container = document.getElementById('flights-list');
             const emptyState = document.getElementById('flights-empty');
             
@@ -897,7 +982,7 @@
                 card.className = 'glass-panel p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition space-y-4 relative overflow-hidden';
 
                 const deleteFlightBtn = isOwnerMode ? `
-                    <button onclick="deleteFlight('${f.id}')" title="Удалить рейс (Только владельцу)" class="p-2 text-slate-400 hover:text-red-500 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <button onclick="deleteFlight('${f.id}')" title="Удалить рейс" class="p-2 text-slate-400 hover:text-red-500 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 ` : '';
@@ -951,10 +1036,9 @@
 
                 container.appendChild(card);
             });
-        }
+        };
 
-        // Action Handlers
-        function handleCreateCity(e) {
+        window.handleCreateCity = async function(e) {
             e.preventDefault();
             const errorEl = document.getElementById('city-form-error');
             errorEl.classList.add('hidden');
@@ -970,38 +1054,43 @@
                 return;
             }
 
+            const cityId = 'city-' + Date.now();
             const newCity = {
-                id: 'city-' + Date.now(),
+                id: cityId,
                 name,
                 country,
                 airport,
                 iata
             };
 
-            cities.push(newCity);
-            saveData();
-            populateCitySelects();
-            renderCities();
-            
-            document.getElementById('form-add-city').reset();
-            showToast('Город и аэропорт успешно внесены в базу!', 'success');
-        }
+            try {
+                // Save to Firestore Cloud
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cities', cityId), newCity);
+                document.getElementById('form-add-city').reset();
+                showToast('Город и аэропорт успешно сохранены в облаке!', 'success');
+            } catch (err) {
+                console.error("Firestore Error:", err);
+                showToast('Ошибка при сохранении в облако', 'error');
+            }
+        };
 
-        function deleteCity(id) {
+        window.deleteCity = async function(id) {
             const hasFlights = flights.some(f => f.originId === id || f.destinationId === id);
             if (hasFlights) {
                 showToast('Нельзя удалить город, к которому привязаны существующие рейсы!', 'error');
                 return;
             }
 
-            cities = cities.filter(c => c.id !== id);
-            saveData();
-            populateCitySelects();
-            renderCities();
-            showToast('Запись об аэропорте удалена.', 'info');
-        }
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cities', id));
+                showToast('Запись об аэропорте удалена из облака.', 'info');
+            } catch (err) {
+                console.error(err);
+                showToast('Ошибка при удалении', 'error');
+            }
+        };
 
-        function handleCreateFlight(e) {
+        window.handleCreateFlight = async function(e) {
             e.preventDefault();
             const errorEl = document.getElementById('flight-form-error');
             errorEl.classList.add('hidden');
@@ -1023,8 +1112,9 @@
                 return;
             }
 
+            const flightId = 'fl-' + Date.now();
             const newFlight = {
-                id: 'fl-' + Date.now(),
+                id: flightId,
                 airline,
                 flightNumber,
                 originId,
@@ -1038,32 +1128,37 @@
                 bookedSeats: []
             };
 
-            flights.unshift(newFlight);
-            saveData();
-            renderFlights();
-            
-            document.getElementById('form-add-flight').reset();
-            showToast(`Рейс ${flightNumber} успешно создан!`, 'success');
-            switchTab('board');
-        }
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'flights', flightId), newFlight);
+                document.getElementById('form-add-flight').reset();
+                showToast(`Рейс ${flightNumber} успешно опубликован!`, 'success');
+                switchTab('board');
+            } catch (err) {
+                console.error(err);
+                showToast('Ошибка при публикации рейса в облако', 'error');
+            }
+        };
 
-        function deleteFlight(id) {
-            flights = flights.filter(f => f.id !== id);
-            saveData();
-            renderFlights();
-            showToast('Рейс удален из расписания.', 'info');
-        }
+        window.deleteFlight = async function(id) {
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'flights', id));
+                showToast('Рейс удален из расписания.', 'info');
+            } catch (err) {
+                console.error(err);
+                showToast('Ошибка при удалении рейса', 'error');
+            }
+        };
 
-        function resetFilters() {
+        window.resetFilters = function() {
             document.getElementById('filter-origin-text').value = '';
             document.getElementById('filter-destination-text').value = '';
             document.getElementById('filter-origin').value = '';
             document.getElementById('filter-destination').value = '';
             document.getElementById('filter-date').value = '';
             renderFlights();
-        }
+        };
 
-        function openBookingModal(flightId) {
+        window.openBookingModal = function(flightId) {
             selectedFlightForBooking = flights.find(f => f.id === flightId);
             if (!selectedFlightForBooking) return;
 
@@ -1078,25 +1173,26 @@
 
             renderSeatsGrid();
             document.getElementById('booking-modal').classList.remove('hidden');
-        }
+        };
 
-        function closeBookingModal() {
+        window.closeBookingModal = function() {
             document.getElementById('booking-modal').classList.add('hidden');
             selectedFlightForBooking = null;
             selectedSeat = null;
-        }
+        };
 
         function renderSeatsGrid() {
             const grid = document.getElementById('seats-grid');
             grid.innerHTML = '';
 
-            const rows = ['1', '2', '3', '4'];
+            const rows = ['1', '2', '3', '4', '5', '6'];
             const cols = ['A', 'B', 'C', 'D', 'E', 'F'];
+            const bookedSeats = selectedFlightForBooking.bookedSeats || [];
 
             rows.forEach(row => {
                 cols.forEach((col) => {
                     const seatCode = `${row}${col}`;
-                    const isOccupied = selectedFlightForBooking.bookedSeats.includes(seatCode);
+                    const isOccupied = bookedSeats.includes(seatCode);
 
                     const seatBtn = document.createElement('button');
                     seatBtn.type = 'button';
@@ -1133,7 +1229,7 @@
             });
         }
 
-        function confirmBooking() {
+        window.confirmBooking = async function() {
             const passengerName = document.getElementById('passenger-name').value.trim();
 
             if (!passengerName) {
@@ -1146,19 +1242,19 @@
                 return;
             }
 
-            selectedFlightForBooking.bookedSeats.push(selectedSeat);
-            saveData();
+            const updatedSeats = [...(selectedFlightForBooking.bookedSeats || []), selectedSeat];
+            selectedFlightForBooking.bookedSeats = updatedSeats;
 
-            closeBookingModal();
-            renderFlights();
-
-            showToast(`Билет забронирован! Пассажир: ${passengerName}, Место: ${selectedSeat}`, 'success');
-            document.getElementById('passenger-name').value = '';
-        }
-
-        function updateStats() {
-            // Internal stats update counter
-        }
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'flights', selectedFlightForBooking.id), selectedFlightForBooking);
+                closeBookingModal();
+                showToast(`Билет забронирован! Пассажир: ${passengerName}, Место: ${selectedSeat}`, 'success');
+                document.getElementById('passenger-name').value = '';
+            } catch (err) {
+                console.error(err);
+                showToast('Ошибка при обновлении бронирования', 'error');
+            }
+        };
 
         function formatCurrency(val, currency) {
             if (currency === 'RUB') return `${val.toLocaleString('ru-RU')} ₽`;
@@ -1220,7 +1316,7 @@
             }
         }
 
-        function toggleDarkMode() {
+        window.toggleDarkMode = function() {
             const darkIcon = document.getElementById('theme-toggle-dark-icon');
             const lightIcon = document.getElementById('theme-toggle-light-icon');
 
@@ -1235,7 +1331,7 @@
                 darkIcon.classList.add('hidden');
                 lightIcon.classList.remove('hidden');
             }
-        }
+        };
     </script>
 </body>
 </html>
